@@ -1,0 +1,26 @@
+{
+    "name": "browserpass-chromeos",
+    "version": "0.1.0-dev",
+    "description": "Browserpass backend for smart cards on Chrome OS",
+    "homepage": "https://github.com/FabianHenneke/browserpass-chromeos",
+    "license": "ISC",
+    "author": [
+        {
+            "name": "Maxim Baz",
+            "email": "browserpass@maximbaz.com"
+        },
+        {
+            "name": "Steve Gilberd",
+            "email": "steve@erayd.net"
+        },
+        {
+            "name": "Fabian Henneke",
+            "email": "fabian@henneke.me"
+        }
+    ],
+    "dependencies": {},
+    "devDependencies": {
+        "browserify": "^16.2.3",
+        "prettier": "^1.16.4"
+    }
+}

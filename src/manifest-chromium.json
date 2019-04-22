@@ -1,0 +1,11 @@
+{
+    "manifest_version": 2,
+    "name": "Browserpass Chrome OS",
+    "description": "Browserpass backend for smart cards on Chrome OS",
+    "version": "0.1.0",
+    "author": "Maxim Baz <browserpass@maximbaz.com>, Steve Gilberd <steve@erayd.net>, Fabian Henneke <fabian@henneke.me>",
+    "homepage_url": "https://github.com/FabianHenneke/browserpass-chromeos",
+    "background": {
+        "scripts": ["js/background.dist.js"]
+    }
+}
