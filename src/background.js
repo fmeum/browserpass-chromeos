@@ -3,7 +3,7 @@
 "use strict";
 
 import { ErrorCode } from "./errors.js";
-import { fetchFileContents, restoreStoreAccess } from "./files.js";
+import { fetchFileContents, restoreStoreAccess, listEncryptedFiles } from "./files.js";
 
 const VERSION_MAJOR = 3;
 const VERSION_MINOR = 1;
@@ -39,6 +39,9 @@ async function handleRequests(request, sender, sendResponse) {
     switch (request.action) {
         case "configure":
             response = await handleConfigure(request.settings);
+            break;
+        case "list":
+            response = await handleList(request.settings);
             break;
         case "echo":
             response = makeOkResponse(request.echoResponse);
@@ -89,6 +92,38 @@ async function handleConfigure(settings) {
             return makeErrorResponse(ErrorCode.InaccessiblePasswordStore, {
                 message: "Failed to restore access to the password store",
                 action: "configure",
+                error: e.message,
+                storeId: store.id,
+                storeName: store.name,
+                storePath: store.path
+            });
+        }
+    }
+
+    return makeOkResponse(data);
+}
+
+async function handleList(settings) {
+    const data = { files: {} };
+    for (const store of Object.values(settings.stores)) {
+        try {
+            const storeEntry = await restoreStoreAccess(store.path);
+            try {
+                data.files[store.id] = await listEncryptedFiles(storeEntry);
+            } catch (e) {
+                return makeErrorResponse(ErrorCode.UnableToListFilesInPasswordStore, {
+                    message: "Unable to list the files in the password store",
+                    action: "list",
+                    error: e.message,
+                    storeId: store.id,
+                    storeName: store.name,
+                    storePath: store.path
+                });
+            }
+        } catch (e) {
+            return makeErrorResponse(ErrorCode.InaccessiblePasswordStore, {
+                message: "Failed to restore access to the password store",
+                action: "list",
                 error: e.message,
                 storeId: store.id,
                 storeName: store.name,

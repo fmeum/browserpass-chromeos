@@ -7,9 +7,9 @@ export const ErrorCode = Object.freeze({
     InaccessiblePasswordStore: 13,
     // InaccessibleDefaultPasswordStore: 14,
     UnknownDefaultPasswordStoreLocation: 15,
-    UnreadablePasswordStoreDefaultSettings: 16
+    UnreadablePasswordStoreDefaultSettings: 16,
     // UnreadableDefaultPasswordStoreDefaultSettings: 17,
-    // UnableToListFilesInPasswordStore: 18,
+    UnableToListFilesInPasswordStore: 18
     // UnableToDetermineRelativeFilePathInPasswordStore: 19,
     // InvalidPasswordStore: 20,
     // InvalidGpgPath: 21,
