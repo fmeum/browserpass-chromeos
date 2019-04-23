@@ -4,17 +4,16 @@
     "description": "Browserpass backend for smart cards on Chrome OS",
     "version": "0.1.0",
     "author": "Maxim Baz <browserpass@maximbaz.com>, Steve Gilberd <steve@erayd.net>, Fabian Henneke <fabian@henneke.me>",
-    "homepage_url": "https://github.com/FabianHenneke/browserpass-chromeos",
-    "background": {
-        "scripts": ["js/background.dist.js"]
+    "app": {
+        "background": {
+            "page": "background.html"
+        }
     },
-    "options_ui": {
-        "page": "options/options.html",
-        "chrome_style": true,
-        "open_in_tab": false
-    },
-    "permissions": {
-        "fileSystem": ["directory", "retainEntries"]
-    },
+    "permissions": [
+        {
+            "fileSystem": ["directory", "retainEntries"]
+        }
+    ],
+    "minimum_chrome_version": "63",
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlV2K5EeSOu5k13XI6NTH6qL6W+B0FAGRkTxNS+hhHjK5M8Q/JAK74MLEJjU7bfJ6G1ld779GtpzEi98UoHxfMeTdJy3oBnqp7up70W+gTu5BauQQi8bF5cNIzrNCQV0rUFHVirhU05fjt0M2IEhi4R+RGkTRVdh9wteUOHsgvADW1HsgYvZAoqHwudWRzigcMv9FrOx89UrKrSt9Rdvm4QI/5LEBkvk6Nhfm1HngSDKWERTuDI7bp8NTHFNu7xWVbBdW4TcqpTZmcjLs/T/Qf5CNkbPenpeltSso0psaJyVEPSwiYgUxaueto421if+Hl1Ftn9bpDDpf2cuH3cYIVQIDAQAB"
 }
