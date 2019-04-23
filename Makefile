@@ -14,10 +14,12 @@ extension:
 	$(MAKE) -C src
 
 EXTENSION_FILES := \
-	src/fonts/*
+	src/fonts/* \
+	src/options/*.html
 EXTENSION_FILES := \
     $(wildcard $(EXTENSION_FILES)) \
-	src/js/background.dist.js
+	src/js/background.dist.js \
+	src/js/options.dist.js
 CHROMIUM_FILES := $(patsubst src/%,chromium/%, $(EXTENSION_FILES))
 
 .PHONY: chromium

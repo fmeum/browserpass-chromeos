@@ -8,6 +8,11 @@
     "background": {
         "scripts": ["js/background.dist.js"]
     },
+    "options_ui": {
+        "page": "options/options.html",
+        "chrome_style": true,
+        "open_in_tab": false
+    },
     "permissions": {
         "fileSystem": ["directory", "retainEntries"]
     },

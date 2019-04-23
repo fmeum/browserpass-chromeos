@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <script type="module" src="options.js"></script>
+    </head>
+    <body>
+        <h3>Authorize access to a store</h3>
+        <p>Step 1: Click "Authorize store access" and select the location of a pass repository:</p>
+        <input type="button" id="store-access-btn" value="Authorize store access" />
+        <p>Step 2: Copy the following:</p>
+        <input
+            type="text"
+            id="store-path-id-txt"
+            placeholder="Authorize store access first..."
+            readonly
+        />
+        <p>
+            Step 3: Open the options of browserpass-extensions, click "Add store" and paste the
+            copied string into the <code>/path/to/store</code> field.
+        </p>
+        <p>Step 4: Remember to give the store a descriptive name, and click "Save".</p>
+    </body>
+</html>
