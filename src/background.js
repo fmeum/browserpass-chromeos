@@ -2,6 +2,8 @@
 
 "use strict";
 
+import { ErrorCode } from "./errors.js";
+
 const VERSION_MAJOR = 3;
 const VERSION_MINOR = 1;
 const VERSION_PATCH = 0;
@@ -23,8 +25,8 @@ function handleRequests(request, sender, sendResponse) {
         return;
     }
     // TODO: implement
-    const response = makeErrorResponse(12, {
-        message: "Not implemented.",
+    const response = makeErrorResponse(ErrorCode.InvalidRequestAction, {
+        message: "Invalid request action",
         action: request.action
     });
 

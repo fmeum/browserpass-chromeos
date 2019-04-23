@@ -16,9 +16,9 @@ deps:
 prettier: $(PRETTIER) $(PRETTIER_FILES)
 	$(PRETTIER) --write $(PRETTIER_FILES)
 
-js/background.dist.js: $(BROWSERIFY) background.js
+js/background.dist.js: $(BROWSERIFY) background.js errors.js
 	[ -d js ] || mkdir -p js
-	$(BROWSERIFY) -o js/background.dist.js background.js
+	$(BROWSERIFY) -o js/background.dist.js -t [ babelify --presets [ @babel/preset-env ] ] background.js
 
 .PHONY: clean
 clean:
