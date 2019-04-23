@@ -18,8 +18,10 @@
             "email": "fabian@henneke.me"
         }
     ],
-    "dependencies": {},
     "devDependencies": {
+        "@babel/core": "^7.4.3",
+        "@babel/preset-env": "^7.4.3",
+        "babelify": "^10.0.0",
         "browserify": "^16.2.3",
         "prettier": "^1.16.4"
     }
