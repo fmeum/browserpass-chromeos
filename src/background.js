@@ -24,11 +24,18 @@ function handleRequests(request, sender, sendResponse) {
     if (!VALID_SENDERS.includes(sender.id)) {
         return;
     }
-    // TODO: implement
-    const response = makeErrorResponse(ErrorCode.InvalidRequestAction, {
-        message: "Invalid request action",
-        action: request.action
-    });
+
+    let response;
+    switch (request.action) {
+        case "echo":
+            response = makeOkResponse(request.echoResponse);
+            break;
+        default:
+            response = makeErrorResponse(ErrorCode.InvalidRequestAction, {
+                message: "Invalid request action",
+                action: request.action
+            });
+    }
 
     sendResponse(response);
 }
