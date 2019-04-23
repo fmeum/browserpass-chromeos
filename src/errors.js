@@ -3,11 +3,11 @@
 export const ErrorCode = Object.freeze({
     // ParseRequestLength: 10,
     // ParseRequest: 11,
-    InvalidRequestAction: 12
-    // InaccessiblePasswordStore: 13,
+    InvalidRequestAction: 12,
+    InaccessiblePasswordStore: 13,
     // InaccessibleDefaultPasswordStore: 14,
-    // UnknownDefaultPasswordStoreLocation: 15,
-    // UnreadablePasswordStoreDefaultSettings: 16,
+    UnknownDefaultPasswordStoreLocation: 15,
+    UnreadablePasswordStoreDefaultSettings: 16
     // UnreadableDefaultPasswordStoreDefaultSettings: 17,
     // UnableToListFilesInPasswordStore: 18,
     // UnableToDetermineRelativeFilePathInPasswordStore: 19,
