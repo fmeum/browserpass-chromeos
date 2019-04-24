@@ -1,5 +1,3 @@
-"use strict";
-
 export function authorizeNewStoreAccess() {
     return new Promise((resolve, reject) => {
         chrome.fileSystem.chooseEntry({ type: "openDirectory" }, entry => {

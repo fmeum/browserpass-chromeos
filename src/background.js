@@ -1,7 +1,5 @@
 //------------------------------------- Initialisation --------------------------------------//
 
-"use strict";
-
 import { ErrorCode } from "./errors.js";
 import { fetchFileContents, restoreStoreAccess, listEncryptedFiles } from "./files.js";
 

@@ -1,5 +1,3 @@
-"use strict";
-
 export const ErrorCode = Object.freeze({
     // ParseRequestLength: 10,
     // ParseRequest: 11,
