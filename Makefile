@@ -22,11 +22,15 @@ EXTENSION_FILES := \
 	src/make-persistent/make-persistent.js \
 	src/options/options.html \
 	src/options/options.js \
+	src/pin-entry/pin-entry.css \
+	src/pin-entry/pin-entry.html \
+	src/pin-entry/pin-entry.js \
 	src/background.html \
 	src/background.js \
 	src/errors.js \
 	src/files.js \
 	src/validator.js \
+	src/secrets.js \
 	src/dist/request.dist.js
 CHROMIUM_FILES := $(patsubst src/%,chromium/%, $(EXTENSION_FILES))
 
