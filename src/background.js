@@ -43,6 +43,9 @@ async function handleRequests(request, sender, sendResponse) {
         case "list":
             response = await handleList(request.settings);
             break;
+        case "fetch":
+            response = await handleFetch(request);
+            break;
         case "echo":
             response = makeOkResponse(request.echoResponse);
             break;
@@ -130,6 +133,54 @@ async function handleList(settings) {
                 storePath: store.path
             });
         }
+    }
+
+    return makeOkResponse(data);
+}
+
+async function handleFetch(request) {
+    const data = {};
+    if (!request.file.endsWith(".gpg")) {
+        return makeErrorResponse(ErrorCode.InvalidPasswordFileExtension, {
+            message: "The requested password file does not have the expected '.gpg' extension",
+            action: "fetch",
+            file: request.file
+        });
+    }
+    const store = request.settings.stores[request.storeId];
+    if (store === undefined) {
+        return makeErrorResponse(ErrorCode.InvalidPasswordStore, {
+            message: "The password store is not present in the list of stores",
+            action: "fetch",
+            storeId: request.storeId
+        });
+    }
+    try {
+        const storeEntry = await restoreStoreAccess(store.path);
+        try {
+            const encryptedContents = await fetchFileContents(storeEntry, request.file);
+            // TODO: Implement decryption.
+            data.contents = encryptedContents;
+        } catch (e) {
+            return makeErrorResponse(ErrorCode.InaccessiblePasswordStore, {
+                message: "Unable to decrypt the password file",
+                action: "fetch",
+                error: e.message,
+                file: request.file,
+                storeId: store.id,
+                storeName: store.name,
+                storePath: store.path
+            });
+        }
+    } catch (e) {
+        return makeErrorResponse(ErrorCode.InaccessiblePasswordStore, {
+            message: "Failed to restore access to the password store",
+            action: "fetch",
+            error: e.message,
+            storeId: store.id,
+            storeName: store.name,
+            storePath: store.path
+        });
     }
 
     return makeOkResponse(data);

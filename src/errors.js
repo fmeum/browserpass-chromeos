@@ -9,11 +9,11 @@ export const ErrorCode = Object.freeze({
     UnknownDefaultPasswordStoreLocation: 15,
     UnreadablePasswordStoreDefaultSettings: 16,
     // UnreadableDefaultPasswordStoreDefaultSettings: 17,
-    UnableToListFilesInPasswordStore: 18
+    UnableToListFilesInPasswordStore: 18,
     // UnableToDetermineRelativeFilePathInPasswordStore: 19,
-    // InvalidPasswordStore: 20,
+    InvalidPasswordStore: 20,
     // InvalidGpgPath: 21,
     // UnableToDetectGpgPath: 22,
-    // InvalidPasswordFileExtension: 23,
-    // UnableToDecryptPasswordFile: 24,
+    InvalidPasswordFileExtension: 23,
+    UnableToDecryptPasswordFile: 24
 });
