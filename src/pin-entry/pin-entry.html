@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="pin-entry.css" />
+        <script type="module" src="pin-entry.js"></script>
+    </head>
+    <body>
+        <p>
+            Enter your PIN to unlock key <span id="fingerprint"></span> on
+            <span id="reader"></span> (<span id="triesRemaining"></span> tries remaining):
+        </p>
+        <input type="password" id="pin-txt" placeholder="PIN" autofocus /><br />
+        <label>
+            <input type="checkbox" id="cache-chk" />
+            Don't ask again while I'm actively using the computer </label
+        ><br />
+        <input type="button" id="cancel-btn" value="Cancel" />
+        <input type="button" id="submit-btn" value="OK" />
+        <p>
+            Security advice: Always <strong>press F11/full-screen key</strong> and
+            <strong>verify the dialog still obstructs part of the address bar</strong> before
+            entering your PIN.
+            <a
+                id="learn-more-a"
+                href="https://github.com/FabianHenneke/browserpass-chromeos#Security-considerations"
+                target="_blank"
+                >Learn more</a
+            >
+        </p>
+    </body>
+</html>

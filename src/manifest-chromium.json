@@ -10,6 +10,8 @@
         }
     },
     "permissions": [
+        "alwaysOnTopWindows",
+        "idle",
         {
             "fileSystem": ["directory", "retainEntries"]
         }

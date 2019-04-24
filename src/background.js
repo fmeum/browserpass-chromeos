@@ -2,6 +2,7 @@
 
 import { ErrorCode } from "./errors.js";
 import { fetchFileContents, restoreStoreAccess, listEncryptedFiles } from "./files.js";
+import { getPinForId, setAndClearPinForId } from "./secrets.js";
 import { validateRequest } from "./validator.js";
 
 const VERSION_MAJOR = 3;
