@@ -17,6 +17,9 @@ EXTENSION_FILES := \
 	src/fonts/*
 EXTENSION_FILES := \
     $(wildcard $(EXTENSION_FILES)) \
+	src/make-persistent/make-persistent-iframe.html \
+	src/make-persistent/make-persistent-iframe.js \
+	src/make-persistent/make-persistent.js \
 	src/options/options.html \
 	src/options/options.js \
 	src/background.html \
