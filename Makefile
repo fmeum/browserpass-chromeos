@@ -22,7 +22,9 @@ EXTENSION_FILES := \
 	src/background.html \
 	src/background.js \
 	src/errors.js \
-	src/files.js
+	src/files.js \
+	src/validator.js \
+	src/dist/request.dist.js
 CHROMIUM_FILES := $(patsubst src/%,chromium/%, $(EXTENSION_FILES))
 
 .PHONY: chromium

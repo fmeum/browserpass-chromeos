@@ -1,6 +1,6 @@
 export const ErrorCode = Object.freeze({
     // ParseRequestLength: 10,
-    // ParseRequest: 11,
+    ParseRequest: 11,
     InvalidRequestAction: 12,
     InaccessiblePasswordStore: 13,
     // InaccessibleDefaultPasswordStore: 14,

@@ -2,6 +2,7 @@
 
 import { ErrorCode } from "./errors.js";
 import { fetchFileContents, restoreStoreAccess, listEncryptedFiles } from "./files.js";
+import { validateRequest } from "./validator.js";
 
 const VERSION_MAJOR = 3;
 const VERSION_MINOR = 1;
@@ -30,6 +31,17 @@ chrome.app.runtime.onLaunched.addListener(function() {
 async function handleRequests(request, sender, sendResponse) {
     // reject invalid senders
     if (!VALID_SENDERS.includes(sender.id)) {
+        return;
+    }
+
+    const validationResult = validateRequest(request);
+    if (!validationResult.valid) {
+        sendResponse(
+            makeErrorResponse(ErrorCode.ParseRequest, {
+                message: "Unable to parse the browser request",
+                error: validationResult.errors[0].message
+            })
+        );
         return;
     }
 
