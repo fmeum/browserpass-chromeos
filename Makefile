@@ -29,9 +29,11 @@ EXTENSION_FILES := \
 	src/background.js \
 	src/errors.js \
 	src/files.js \
+	src/openpgp.js \
 	src/validator.js \
 	src/secrets.js \
-	src/dist/request.dist.js
+	src/dist/request.dist.js \
+	src/node_modules/openpgp/dist/openpgp.min.js
 CHROMIUM_FILES := $(patsubst src/%,chromium/%, $(EXTENSION_FILES))
 
 .PHONY: chromium
