@@ -24,6 +24,7 @@
         "prettier": "^1.16.4"
     },
     "dependencies": {
-        "ajv": "^6.0.0"
+        "ajv": "^6.0.0",
+        "openpgp": "^4.4.10"
     }
 }

@@ -26,7 +26,7 @@ export function restoreStoreAccess(storePathId) {
     });
 }
 
-export function fetchFileContents(storeEntry, relPath) {
+export function fetchFileContents(storeEntry, relPath, binary = false) {
     return new Promise((resolve, reject) => {
         storeEntry.getFile(
             relPath,
@@ -36,7 +36,11 @@ export function fetchFileContents(storeEntry, relPath) {
                     const reader = new FileReader();
                     reader.onerror = reject;
                     reader.onload = () => resolve(reader.result);
-                    reader.readAsText(file);
+                    if (binary) {
+                        reader.readAsArrayBuffer(file);
+                    } else {
+                        reader.readAsText(file);
+                    }
                 });
             },
             reject
