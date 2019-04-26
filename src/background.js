@@ -6,10 +6,6 @@ import { parsePgpMessage, decryptWithSessionKey } from "./openpgp.js";
 import { getPinForId, setAndClearPinForId } from "./secrets.js";
 import { validateRequest } from "./validator.js";
 
-const VERSION_MAJOR = 3;
-const VERSION_MINOR = 1;
-const VERSION_PATCH = 0;
-
 const VALID_SENDERS = [
     "naepdomgkenhinolocfifgehidddafch",
     "pjmbgaakjkbhpopmakjoedenlfdmcdgm",
@@ -221,5 +217,15 @@ function makeErrorResponse(code, params) {
 }
 
 function versionAsInt() {
-    return VERSION_MAJOR * 1000000 + VERSION_MINOR * 1000 + VERSION_PATCH;
+    const { version } = chrome.runtime.getManifest();
+    const versionComponents = version.split(".");
+    if (versionComponents.length !== 3) {
+        console.error("The 'version' field in manifest.json is not of the form X.Y.Z");
+        return 0;
+    }
+    return (
+        parseInt(versionComponents[0]) * 1000000 +
+        parseInt(versionComponents[1]) * 1000 +
+        parseInt(versionComponents[2])
+    );
 }
