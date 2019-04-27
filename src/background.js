@@ -3,7 +3,7 @@
 import { ErrorCode } from "./errors.js";
 import { fetchFileContents, restoreStoreAccess, listEncryptedFiles } from "./files.js";
 import { parsePgpMessage, decryptWithSessionKey } from "./openpgp.js";
-import { getPinForId, setAndClearPinForId } from "./secrets.js";
+import { decryptOnSmartCard } from "./smart-card.js";
 import { validateRequest } from "./validator.js";
 
 const VALID_SENDERS = [
@@ -169,10 +169,10 @@ async function handleFetch(request) {
             const encryptedContents = new Uint8Array(
                 await fetchFileContents(storeEntry, request.file, /* binary */ true)
             );
-            const { pgpMessage, encryptedSessionKeyForFingerprint } = await parsePgpMessage(
+            const { pgpMessage, encryptedSessionKeyForKeyId } = await parsePgpMessage(
                 encryptedContents
             );
-            const decryptedSessionKey = await decryptOnSmartCard(encryptedSessionKeyForFingerprint);
+            const decryptedSessionKey = await decryptOnSmartCard(encryptedSessionKeyForKeyId);
             data.contents = await decryptWithSessionKey(pgpMessage, decryptedSessionKey);
         } catch (e) {
             return makeErrorResponse(ErrorCode.InaccessiblePasswordStore, {

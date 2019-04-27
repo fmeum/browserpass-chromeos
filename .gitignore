@@ -7,6 +7,7 @@
 /src/node_modules
 /src/dist
 /src/*.log
+/src/third_party/google-smart-card-client-library.js
 
 *.pem
 *.crx

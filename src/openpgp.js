@@ -2,7 +2,7 @@
 
 const util = openpgp.util;
 
-function bytesToHex(bytes) {
+export function bytesToHex(bytes) {
     return [...bytes]
         .map(b => b.toString(16).padStart(2, "0"))
         .join("")
@@ -18,16 +18,14 @@ export async function parsePgpMessage(encryptedFileBytes) {
         const encryptedFileContents = new TextDecoder().decode(encryptedFileBytes);
         pgpMessage = await openpgp.message.readArmored(encryptedFileContents);
     }
-    const encryptedSessionKeyForFingerprint = {};
+    const encryptedSessionKeyForKeyId = {};
     for (const pkESKeyPacket of pgpMessage.packets.filterByTag(
         openpgp.enums.packet.publicKeyEncryptedSessionKey
     )) {
         const publicKeyId = bytesToHex(pkESKeyPacket.publicKeyId.write());
-        encryptedSessionKeyForFingerprint[
-            publicKeyId
-        ] = pkESKeyPacket.encrypted[0].write().subarray(2);
+        encryptedSessionKeyForKeyId[publicKeyId] = pkESKeyPacket.encrypted[0].write().subarray(2);
     }
-    return { pgpMessage, encryptedSessionKeyForFingerprint };
+    return { pgpMessage, encryptedSessionKeyForKeyId };
 }
 
 export async function decryptWithSessionKey(pgpMessage, rawSessionKey) {
