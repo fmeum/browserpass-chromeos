@@ -32,8 +32,10 @@ EXTENSION_FILES := \
 	src/openpgp.js \
 	src/validator.js \
 	src/secrets.js \
+	src/smart-card.js \
 	src/dist/request.dist.js \
-	src/node_modules/openpgp/dist/openpgp.min.js
+	src/node_modules/openpgp/dist/openpgp.min.js \
+	src/third_party/google-smart-card-client-library.js
 CHROMIUM_FILES := $(patsubst src/%,chromium/%, $(EXTENSION_FILES))
 
 .PHONY: chromium
