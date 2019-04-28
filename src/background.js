@@ -175,7 +175,7 @@ async function handleFetch(request) {
             const decryptedSessionKey = await decryptOnSmartCard(encryptedSessionKeyForKeyId);
             data.contents = await decryptWithSessionKey(pgpMessage, decryptedSessionKey);
         } catch (e) {
-            return makeErrorResponse(ErrorCode.InaccessiblePasswordStore, {
+            return makeErrorResponse(ErrorCode.UnableToDecryptPasswordFile, {
                 message: "Unable to decrypt the password file",
                 action: "fetch",
                 error: e.message,
