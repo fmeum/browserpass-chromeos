@@ -35,6 +35,7 @@ EXTENSION_FILES := \
 	src/smart-card.js \
 	src/dist/request.dist.js \
 	src/node_modules/openpgp/dist/openpgp.min.js \
+	src/node_modules/isomorphic-git/dist/bundle.umd.min.js \
 	src/third_party/google-smart-card-client-library.js
 CHROMIUM_FILES := $(patsubst src/%,chromium/%, $(EXTENSION_FILES))
 

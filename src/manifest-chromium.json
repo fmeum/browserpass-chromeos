@@ -13,7 +13,7 @@
         "alwaysOnTopWindows",
         "idle",
         {
-            "fileSystem": ["directory", "retainEntries"]
+            "fileSystem": ["directory", "retainEntries", "write"]
         }
     ],
     "minimum_chrome_version": "63",

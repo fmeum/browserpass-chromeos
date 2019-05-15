@@ -88,7 +88,7 @@ async function handleConfigure(settings) {
                 JSON.parse(rawContent);
                 data.storeSettings[store.id] = rawContent;
             } catch (e) {
-                if (e.name !== "NotFoundError") {
+                if (e.code !== "ENOENT") {
                     return makeErrorResponse(ErrorCode.UnreadablePasswordStoreDefaultSettings, {
                         message: "Unable to read .browserpass.json of the password store",
                         action: "configure",
