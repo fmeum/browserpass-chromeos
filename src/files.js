@@ -74,6 +74,27 @@ function readAllEntries(dirReader) {
     });
 }
 
+export function readFileEntry(fileEntry, asString = false) {
+    return new Promise((resolve, reject) => {
+        fileEntry.file(file => {
+            const reader = new FileReader();
+            reader.onerror = reject;
+            reader.onload = () => {
+                if (reader.result instanceof ArrayBuffer) {
+                    resolve(new Uint8Array(reader.result));
+                } else {
+                    resolve(reader.result);
+                }
+            };
+            if (asString) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        });
+    });
+}
+
 class ChromeFSError extends Error {
     constructor(code, ...args) {
         super(...args);
@@ -110,24 +131,10 @@ class ChromeFS {
         this._root.getFile(
             path,
             {},
-            fileEntry => {
-                fileEntry.file(file => {
-                    const reader = new FileReader();
-                    reader.onerror = reject;
-                    reader.onload = () => {
-                        if (reader.result instanceof ArrayBuffer) {
-                            resolve(new Uint8Array(reader.result));
-                        } else {
-                            resolve(reader.result);
-                        }
-                    };
-                    if (asString) {
-                        reader.readAsText(file);
-                    } else {
-                        reader.readAsArrayBuffer(file);
-                    }
-                });
-            },
+            fileEntry =>
+                readFileEntry(fileEntry, asString)
+                    .then(resolve)
+                    .catch(reject),
             reject
         );
     }
@@ -309,10 +316,38 @@ export function authorizeNewStoreAccess() {
     return new Promise((resolve, reject) => {
         chrome.fileSystem.chooseEntry({ type: "openDirectory" }, entry => {
             if (chrome.runtime.lastError) {
+                // User cancelled
+                reject();
+                return;
+            }
+            const fs = new ChromeFS(entry);
+            fs.stat("/.gpg-id", (e, result) => {
+                if (e) {
+                    reject(new Error("Selected directory is not a pass store (missing .gpg-id)"));
+                } else {
+                    if (!result.isFile()) {
+                        reject(
+                            new Error(
+                                "Selected directory is not a pass store (.gpg-id is not a file)"
+                            )
+                        );
+                    } else {
+                        resolve(chrome.fileSystem.retainEntry(entry));
+                    }
+                }
+            });
+        });
+    });
+}
+
+export function chooseFile() {
+    return new Promise((resolve, reject) => {
+        chrome.fileSystem.chooseEntry({ type: "openFile" }, entry => {
+            if (chrome.runtime.lastError) {
                 reject(new Error(chrome.runtime.lastError.message));
                 return;
             }
-            resolve(chrome.fileSystem.retainEntry(entry));
+            resolve(entry);
         });
     });
 }
@@ -333,10 +368,10 @@ export function restoreStoreAccess(storePathId) {
     });
 }
 
-export function fetchFileContents(storeEntry, path, binary = false) {
+export function readFileInStore(storeEntry, path, asString = false) {
     return new Promise((resolve, reject) => {
         const fs = new ChromeFS(storeEntry);
-        fs.readFile(path, binary ? null : { encoding: "utf8" }, (e, data) => {
+        fs.readFile(path, asString ? null : { encoding: "utf8" }, (e, data) => {
             if (e) {
                 reject(e);
             } else {

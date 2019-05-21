@@ -1,7 +1,7 @@
 //------------------------------------- Initialisation --------------------------------------//
 
 import { ErrorCode } from "./errors.js";
-import { fetchFileContents, restoreStoreAccess, listEncryptedFiles } from "./files.js";
+import { readFileInStore, restoreStoreAccess, listEncryptedFiles } from "./files.js";
 import { parsePgpMessage, decryptWithSessionKey } from "./openpgp.js";
 import { decryptOnSmartCard } from "./smart-card.js";
 import { validateRequest } from "./validator.js";
@@ -82,7 +82,7 @@ async function handleConfigure(settings) {
             const storeEntry = await restoreStoreAccess(store.path);
             data.storeSettings[store.id] = "{}";
             try {
-                const rawContent = await fetchFileContents(storeEntry, ".browserpass.json");
+                const rawContent = await readFileInStore(storeEntry, ".browserpass.json");
                 // Verify that the file contains valid JSON.
                 // TODO: Verify a schema.
                 JSON.parse(rawContent);
@@ -167,7 +167,7 @@ async function handleFetch(request) {
         const storeEntry = await restoreStoreAccess(store.path);
         try {
             const encryptedContents = new Uint8Array(
-                await fetchFileContents(storeEntry, request.file, /* binary */ true)
+                await readFileInStore(storeEntry, request.file, /* binary */ true)
             );
             const { pgpMessage, encryptedSessionKeyForKeyId } = await parsePgpMessage(
                 encryptedContents
