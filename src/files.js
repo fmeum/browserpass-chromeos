@@ -409,6 +409,27 @@ export function listEncryptedFiles(storeEntry) {
     });
 }
 
+export async function getGpgIdPath(storeEntry, path) {
+    const fs = new ChromeFS(storeEntry);
+    const parent = dirname(path);
+    if (path === parent) {
+        throw new Error("No .gpg-id file found in the store");
+    } else {
+        const candidate = parent === "/" ? "/.gpg-id" : `${parent}/.gpg-id`;
+        return new Promise((resolve, reject) =>
+            fs.stat(candidate, (e, metadata) => {
+                if (!e && metadata.isFile()) {
+                    resolve(candidate);
+                } else {
+                    getGpgIdPath(storeEntry, parent)
+                        .then(resolve)
+                        .catch(reject);
+                }
+            })
+        );
+    }
+}
+
 async function test() {
     let fs = new ChromeFS(await restoreStoreAccess("70BADDB1386975CE02EFEEF18F62BB60:tmp"));
     git.plugins.set("fs", fs);
