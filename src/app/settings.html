@@ -2,16 +2,18 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <script type="module" src="options.js"></script>
+        <link rel="stylesheet" href="settings.css" />
+        <script src="../node_modules/openpgp/dist/openpgp.min.js"></script>
+        <script type="module" src="settings.js"></script>
     </head>
     <body>
         <h3>Authorize access to a store</h3>
         <p>Step 1: Click "Authorize store access" and select the location of a pass repository:</p>
-        <input type="button" id="store-access-btn" value="Authorize store access" />
+        <input type="button" class="store-access__authorize" value="Authorize store access" />
         <p>Step 2: Copy the following:</p>
         <input
             type="text"
-            id="store-path-id-txt"
+            class="store-access__id"
             placeholder="Authorize store access first..."
             readonly
         />
@@ -20,5 +22,14 @@
             copied string into the <code>/path/to/store</code> field.
         </p>
         <p>Step 4: Remember to give the store a descriptive name, and click "Save".</p>
+
+        <h3>Trusted public keys</h3>
+        <table class="pubkey-list__table">
+            <th></th>
+            <th>Public key</th>
+            <th>Encryption subkeys</th>
+            <th>User IDs</th>
+        </table>
+        <input type="button" class="pubkey-list__import-from-file" value="Import from file..." />
     </body>
 </html>

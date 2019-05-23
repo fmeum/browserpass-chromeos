@@ -1,0 +1,13 @@
+.pubkey-list__delete-link {
+    text-decoration: none;
+    color: red;
+}
+
+.pubkey-list__fingerprint {
+    font-family: "Source Code Pro", "Courier New", Courier, monospace;
+    -webkit-user-select: text;
+}
+
+.pubkey-list__user-id {
+    -webkit-user-select: text;
+}
