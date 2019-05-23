@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "ajv": "^6.0.0",
+        "idb": "^4.0.3",
         "isomorphic-git": "^0.55.0",
         "openpgp": "^4.4.10"
     }

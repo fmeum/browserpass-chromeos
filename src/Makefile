@@ -3,7 +3,7 @@ BROWSERIFY := node_modules/.bin/browserify
 PRETTIER := node_modules/.bin/prettier
 
 CLEAN_FILES := dist
-PRETTIER_FILES := $(wildcard *.json *.js *.html options/*.js options/*.html make-persistent/*.js make-persistent/*.html pin-entry/*.js pin-entry/*.html pin-entry/*.css)
+PRETTIER_FILES := $(wildcard *.json *.js *.html app/*.js app/*.html app/*.css make-persistent/*.js make-persistent/*.html pin-entry/*.js pin-entry/*.html pin-entry/*.css)
 
 .PHONY: all
 all: deps prettier dist/request.dist.js

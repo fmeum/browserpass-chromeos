@@ -18,9 +18,8 @@ chrome.runtime.onMessageExternal.addListener(handleRequests);
 // Secondary entry point, invoked from the launcher.
 // Allows to modify the app's settings.
 chrome.app.runtime.onLaunched.addListener(function() {
-    chrome.app.window.create("options/options.html", {
-        id: "options",
-        bounds: { width: 620, height: 500 }
+    chrome.app.window.create("app/settings.html", {
+        id: "settings"
     });
 });
 

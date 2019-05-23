@@ -14,14 +14,16 @@ extension:
 	$(MAKE) -C src
 
 EXTENSION_FILES := \
-	src/fonts/*
+	src/fonts/* \
+	src/node_modules/idb/build/esm/*.js
 EXTENSION_FILES := \
     $(wildcard $(EXTENSION_FILES)) \
 	src/make-persistent/make-persistent-iframe.html \
 	src/make-persistent/make-persistent-iframe.js \
 	src/make-persistent/make-persistent.js \
-	src/options/options.html \
-	src/options/options.js \
+	src/app/settings.css \
+	src/app/settings.html \
+	src/app/settings.js \
 	src/pin-entry/pin-entry.css \
 	src/pin-entry/pin-entry.html \
 	src/pin-entry/pin-entry.js \
