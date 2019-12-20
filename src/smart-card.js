@@ -302,6 +302,61 @@ class OpenPGPSmartCardManager {
         );
     }
 
+    async _waitForReaderRemoved(reader) {
+        let readerState;
+        try {
+            // Returns immediately
+            readerState = await this._execute(
+                this.api.SCardGetStatusChange(this.context, API.INFINITE, [
+                    API.createSCardReaderStateIn(reader, API.SCARD_STATE_UNAWARE, 0x1)
+                ])
+            );
+            readerState[0].current_state = readerState[0].event_state;
+        } catch (e) {
+            throw Error("SmartCardManager._waitForReaderRemoved: " + (await this.decodeError(e)));
+        }
+
+        while (readerState[0].current_state & API.SCARD_STATE_PRESENT) {
+            try {
+                const newState = await this._execute(
+                    this.api.SCardGetStatusChange(this.context, API.INFINITE, [
+                        API.createSCardReaderStateIn(reader, readerState[0].current_state, 0x1)
+                    ])
+                );
+                readerState[0].current_state = newState[0].event_state;
+            } catch (e) {
+                if (e === API.SCARD_E_CANCELLED) {
+                    // SCardGetStatusChange cancelled by SCardCancel
+                    return false;
+                }
+                if (e !== API.SCARD_E_TIMEOUT) {
+                    throw Error(
+                        "SmartCardManager._waitForReaderRemoved: " + (await this.decodeError(e))
+                    );
+                }
+            }
+        }
+        return true;
+    }
+
+    async callOnReaderRemoved(reader, callback) {
+        const tempManager = new OpenPGPSmartCardManager(this.api);
+        await tempManager.establishContext();
+        // Call _waitForReaderRemoval without await to prevent blocking
+        tempManager
+            ._waitForReaderRemoved(reader)
+            .then(shouldRun => {
+                if (shouldRun) {
+                    callback();
+                }
+            })
+            .catch(e => {
+                console.error(e);
+                callback();
+            })
+            .then(() => tempManager.releaseContext());
+    }
+
     async disconnect() {
         if (this.connected) {
             await this._execute(this.api.SCardDisconnect(this.cardHandle, API.SCARD_LEAVE_CARD));
@@ -632,6 +687,9 @@ export async function decryptOnSmartCard(encryptedSessionKeyForKeyId) {
             verified = await manager.verifyPin(pinBytes);
             if (verified && shouldCache) {
                 await setPinForId(pinId, pinBytes);
+                await manager.callOnReaderRemoved(reader, () => {
+                    setPinForId(pinId, null);
+                });
             }
             pinBytes.fill(0);
         } while (!verified);
