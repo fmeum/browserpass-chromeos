@@ -665,7 +665,7 @@ async function connectToReaderByKeyId(keyIds) {
     throw new Error("No OpenPGP token found with matching secret key");
 }
 
-export async function decryptOnSmartCard(encryptedSessionKeyForKeyId) {
+export async function decryptOnSmartCard(encryptedSessionKeyForKeyId, windowBounds) {
     const keyIds = Object.keys(encryptedSessionKeyForKeyId);
     await initializeApiContext();
     try {
@@ -679,7 +679,7 @@ export async function decryptOnSmartCard(encryptedSessionKeyForKeyId) {
             const reader = manager.reader;
             const pinId = `${keyId}:${reader}`;
             const infoToShow = { reader, keyId, triesRemaining };
-            const [pinBytes, shouldCache] = await getPinForId(pinId, infoToShow);
+            const [pinBytes, shouldCache] = await getPinForId(pinId, infoToShow, windowBounds);
             // Check whether user cancelled PIN entry
             if (pinBytes === null) {
                 throw new Error("PIN entry cancelled by user");
