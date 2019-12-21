@@ -29,9 +29,28 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/storeSettings"
                     }
+                },
+                "windowBounds": {
+                    "type": "object",
+                    "properties": {
+                        "left": {
+                            "type": ["integer"]
+                        },
+                        "height": {
+                            "type": ["integer"]
+                        },
+                        "top": {
+                            "type": ["integer"]
+                        },
+                        "width": {
+                            "type": ["integer"]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["left", "height", "top", "width"]
                 }
             },
-            "required": ["gpgPath", "stores"]
+            "required": ["gpgPath", "stores", "windowBounds"]
         }
     },
     "oneOf": [
