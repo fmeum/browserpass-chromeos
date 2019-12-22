@@ -33,7 +33,23 @@ export async function parsePgpMessage(encryptedFileBytes) {
         openpgp.enums.packet.publicKeyEncryptedSessionKey
     )) {
         const publicKeyId = bytesToHex(pkESKeyPacket.publicKeyId.write());
-        encryptedSessionKeyForKeyId[publicKeyId] = pkESKeyPacket.encrypted[0].write().subarray(2);
+        const algorithm = pkESKeyPacket.publicKeyAlgorithm;
+        if (algorithm === 0x1 || algorithm === 0x2) {
+            // RSA
+            encryptedSessionKeyForKeyId[publicKeyId] = {
+                type: "rsa",
+                rawKey: pkESKeyPacket.encrypted[0].data
+            };
+        } else if (algorithm == 0x12) {
+            // ECDH
+            encryptedSessionKeyForKeyId[publicKeyId] = {
+                type: "ecdh",
+                V: pkESKeyPacket.encrypted[0].toUint8Array(),
+                C: pkESKeyPacket.encrypted[1].data
+            }
+        } else {
+            throw new Error(`Unsupported encryption algorithm: ${algorithm}`);
+        }
     }
     return { pgpMessage, encryptedSessionKeyForKeyId };
 }

@@ -13,6 +13,7 @@ let contextHandle;
 let manager;
 
 const KEY_TYPE_RSA = 0x01;
+const KEY_TYPE_ECDH = 0x12;
 
 class OpenPGPSmartCardManager {
     constructor(api) {
@@ -238,6 +239,16 @@ class OpenPGPSmartCardManager {
         return appRelatedData.lookup(0xc2)[0];
     }
 
+    async fetchOid() {
+        if (!this.appletSelected) {
+            throw new Error("SmartCardManager.fetchOid: applet not selected");
+        }
+        const appRelatedData = DataObject.fromBytes(
+            await this.transmit(new CommandAPDU(0x00, 0xca, 0x00, 0x6e))
+        );
+        return appRelatedData.lookup(0xc2).slice(1);
+    }
+
     async fetchPinTriesRemaining() {
         if (!this.appletSelected) {
             throw new Error("SmartCardManager.fetchPinTriesRemaining: applet not selected");
@@ -291,15 +302,18 @@ class OpenPGPSmartCardManager {
             throw new Error("SmartCardManager.decrypt: applet not selected");
         }
         // The 0x00 padding byte indicates RSA
-        return this.transmit(
-            new CommandAPDU(
-                0x00,
-                0x2a,
-                0x80,
-                0x86,
-                openpgp.util.concatUint8Array([new Uint8Array([0x00]), cryptogram])
-            )
-        );
+        const data = openpgp.util.concatUint8Array([new Uint8Array([0x00]), cryptogram])
+        return this.transmit(new CommandAPDU(0x00, 0x2a, 0x80, 0x86, data));
+    }
+
+    async performKeyExchange(uncompressedPoint) {
+        if (!this.appletSelected) {
+            throw new Error("SmartCardManager.performKeyExchange: applet not selected");
+        }
+        // See https://gnupg.org/ftp/specs/OpenPGP-smart-card-application-3.3.pdf 7.2.11
+        const dataObject = makeDataObject(
+            0xA6, makeDataObject(0x7F49, makeDataObject(0x86, uncompressedPoint)));
+        return this.transmit(new CommandAPDU(0x00, 0x2a, 0x80, 0x86, dataObject));
     }
 
     async _waitForReaderRemoved(reader) {
@@ -586,6 +600,28 @@ class DataObject {
     }
 }
 
+function makeDataObject(tag, data) {
+    let codedTag;
+    if (tag <= 255) {
+        codedTag = new Uint8Array([tag]);
+    } else if (tag <= 65535) {
+        codedTag = new Uint8Array([tag >>> 8, tag & 0xff]);
+    } else {
+        throw new Error("makeDataObject: tag longer than 2 bytes");
+    }
+    let codedLength;
+    if (data.length <= 127) {
+        codedLength = new Uint8Array([data.length]);
+    } else if (data.length <= 255) {
+        codedLength = new Uint8Array([0b10000001, data.length]);
+    } else if (data.length <= 65535) {
+        codedLength = new Uint8Array([0b10000010, data.length >>> 8, data.length & 0xff]);
+    } else {
+        throw new Error("makeDataObject: data.length > 65535");
+    }
+    return openpgp.util.concatUint8Array([codedTag, codedLength, data]);
+}
+
 async function initializeApiContext() {
     if (!contextHandle || !manager) {
         contextHandle = new GSC.PcscLiteClient.Context(
@@ -641,7 +677,7 @@ async function connectToReaderByKeyId(keyIds) {
                 continue;
             }
             const keyType = await manager.fetchKeyType();
-            if (keyType !== KEY_TYPE_RSA) {
+            if (keyType !== KEY_TYPE_RSA || keyType !== KEY_TYPE_ECDH) {
                 unsupportedKeyTypeFound = true;
                 await manager.disconnect();
                 continue;
@@ -657,12 +693,31 @@ async function connectToReaderByKeyId(keyIds) {
     // At this point we have iterated over all readers without finding a matching one that works
     await manager.releaseContext();
     if (unsupportedKeyTypeFound) {
-        throw new Error("Matching OpenPGP token found, but only RSA keys are supported");
+        throw new Error("Matching OpenPGP token found, but only RSA or ECDH keys are supported");
     }
     if (blockedReaderFound) {
         throw new Error("Matching OpenPGP token found, but no PIN tries left");
     }
     throw new Error("No OpenPGP token found with matching secret key");
+}
+
+async function decryptOnConnectedSmartCard(manager, encryptedSessionKey) {
+    const keyType = await manager.fetchKeyType();
+    if (encryptedSessionKey.type === "rsa") {
+        if (keyType !== KEY_TYPE_RSA) {
+            throw new Error(`Key type ${keyType} on card does not match RSA-encrypted packet`);
+        }
+        return await manager.decrypt(encryptedSessionKey.rawKey);
+    } else if (encryptedSessionKey.type === "ecdh") {
+        if (keyType !== KEY_TYPE_ECDH) {
+            throw new Error(`Key type ${keyType} on card does not match ECDH packet`);
+        }
+        const oid = await manager.fetchOid();
+        const ecdhParams = openpgp.crypto.generateParams(
+            openpgp.enums.publicKey.ecdh, /* RSA bits */ null, openpgp.OID(oid));
+    } else {
+        throw new Error(`Unrecognized key type: ${encryptedSessionKey.type}`)
+    }
 }
 
 export async function decryptOnSmartCard(encryptedSessionKeyForKeyId, windowBounds) {
@@ -694,7 +749,7 @@ export async function decryptOnSmartCard(encryptedSessionKeyForKeyId, windowBoun
             pinBytes.fill(0);
         } while (!verified);
         const encryptedSessionKey = encryptedSessionKeyForKeyId[keyId];
-        return await manager.decrypt(encryptedSessionKey);
+        return await decryptOnConnectedSmartCard(manager, encryptedSessionKey);
     } catch (e) {
         // All errors here are either unexpected raw PC/SC error codes or Error instances to be
         // passed on to the GUI
