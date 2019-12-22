@@ -4,31 +4,12 @@
 
 ## Usage
 
-In order to use browserpass-chromeos instead of browserpass-native, make the following changes to `browserpass-extension/src/background.js`:
+In order to use browserpass-chromeos instead of browserpass-native, use the fork [FabianHenneke/browserpass-extension](https://github.com/FabianHenneke/browserpass-extension) or apply [its last commit](https://github.com/FabianHenneke/browserpass-extension/commit/5efb1f9de6078b509904a83847d370c8e92fc097) to your browserpass-extension repository.
 
-```diff
-diff --git src/background.js src/background.js
-index d36d7b8..154a322 100644
---- src/background.js
-+++ src/background.js
-@@ -6,8 +6,8 @@ const sha1 = require("sha1");
- const idb = require("idb");
- const helpers = require("./helpers");
+Then, do the following:
 
--// native application id
--var appID = "com.github.browserpass.native";
-+// browserpass-chromeos application id
-+var appID = "fdlccgiobmfdfelpnaiaodldncpmcdlb";
-
- // OTP extension id
- var otpID = [
-@@ -814,7 +814,7 @@ function hostAction(settings, action, params = {}) {
-         request[key] = params[key];
-     }
-
--    return chrome.runtime.sendNativeMessage(appID, request);
-+    return chrome.runtime.sendMessage(appID, request);
- }
-
- /**
-```
+1. Install the [Google Smart Card Connector app](https://chrome.google.com/webstore/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco).
+2. Launch the `Browserpass Chrome OS` app from the launcher and authorize access to a pass repository. This can be either a folder in your Downloads directory, a Google Drive folder (make it "available offline" for a better experience) or a shared Linux folder.
+3. Open the options of the Browserpass extension and add the copied authorization code as the path of a custom store.
+4. Connect a smart card reader or hardware token to your Chrome OS device. You can verify that it is recognized in the Smart Card Connector app.
+5. When you first select a credential to fill, you will have to accept the Smart Card Connector's permission prompt.
